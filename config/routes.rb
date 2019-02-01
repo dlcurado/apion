@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # path: "/" => tira a necessidade de identificar o /api apos a URL completa, deixando a URL para 
   # a nossa API dessa forma:
   # api.apion.com/[model]
-  namespace :api, defaults: { format: :json }, constraints { subdomain: 'api' }, path: "/" do
+  namespace :api, defaults: { format: :json }, constraints: { subdomain: 'api' }, path: "/" do
   end
 
 end
