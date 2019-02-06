@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # api.apion.com/[model]
   namespace :api, defaults: { format: :json }, constraints: { subdomain: 'api' }, path: "/" do
     namespace :v1, path: "/", constraints: ApiVersionConstraint.new(version: 1) do
-      #resources :tasks
+      resources :users, only: [:show]
     end
   end
 
