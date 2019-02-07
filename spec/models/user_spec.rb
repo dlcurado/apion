@@ -37,7 +37,7 @@ RSpec.describe User, type: :model do
   #   it { expect(user).not_to be_valid }
   # end
 
-  it { is_expected.to validate_presence_of(:name) }
+  #it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   it { is_expected.to validate_confirmation_of(:password) }
   it { is_expected.to allow_value("dlcurado@gmail.com").for(:email) }
