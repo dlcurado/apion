@@ -30,5 +30,41 @@ RSpec.describe 'Users API request', type: :request do
                 expect(response).to have_http_status(404)
             end
         end
+    
+    
+    end
+
+    describe 'POST /users' do
+        before do
+            headers = { 'Accept' => 'application/vnd.apion.v1'}
+            post '/users' , params: { user: user_params }, headers: headers
+        end
+
+        context 'when the request params are valid' do
+            let(:user_params) { attributes_for(:user) }
+
+            it 'returns status code 201' do
+                expect(response).to have_http_status(201)
+            end
+
+            it 'returns json data with created user' do
+                user_response = JSON.parse(response.body)
+                expect(user_response['email']).to eq(user_params[:email])
+            end
+        end
+
+        context 'when the request params are invalid' do
+            let(:user_params) { attributes_for(:user, email: 'invalid@') }
+
+            it 'return status code 422' do
+                expect(response).to have_http_status(422)
+            end
+
+            it 'returns the data json for the erros' do
+                user_response = JSON.parse(response.body)
+                expect(user_response).to have_key('erros')
+            end
+        end
+
     end
 end
