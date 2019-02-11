@@ -62,9 +62,45 @@ RSpec.describe 'Users API request', type: :request do
 
             it 'returns the data json for the erros' do
                 user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response).to have_key(:erros)
+                expect(user_response).to have_key(:errors)
             end
         end
 
     end
+
+
+    describe 'PUT /user/:id' do
+        before do
+            headers = { 'Accept' => 'application/vnd.apion.v1'}
+            put "/users/#{user_id}" , params: { user: user_params }, headers: headers
+        end
+
+        context 'when the request params are valid' do
+            let(:user_params) { { email: 'novoemail@gmail.com' } }
+
+            it 'returns status code 200' do
+                expect(response).to have_http_status(200)
+            end
+
+            it 'returns json data for updated user' do
+                user_response = JSON.parse(response.body, symbolize_names: true)
+                expect(user_response[:email]).to eq(user_params[:email])
+            end
+        end
+
+        context 'when the request params are invalid' do
+            let(:user_params) { attributes_for(:user, email: 'invalid@') }
+
+            it 'return status code 422' do
+                expect(response).to have_http_status(422)
+            end
+
+            it 'returns the data json for the erros' do
+                user_response = JSON.parse(response.body, symbolize_names: true)
+                expect(user_response).to have_key(:errors)
+            end
+        end
+    
+    end
+
 end
