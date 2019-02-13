@@ -3,20 +3,24 @@ require 'rails_helper'
 RSpec.describe 'Users API request', type: :request do
     let!(:user) { create(:user) }
     let(:user_id) { user.id }
+    let(:headers) do
+        {
+            'Accept' => 'application/vnd.apion.v1',
+            'Content-Type' => Mime[:json].to_s
+        }
+    end
 
     before { host! 'api.apion.abc' }
 
     describe 'GET users/:id' do
         before do
-            headers = { 'Accept' => 'application/vnd.apion.v1'}
             # get URL, { body }, { headers }
             get "/users/#{user_id}", params: {}, headers: headers
         end
 
         context 'when the user exists' do
             it 'returns the user' do
-                user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response[:id]).to eq(user_id)
+                expect(json_body[:id]).to eq(user_id)
             end
 
             it 'returns status 200' do
@@ -36,8 +40,7 @@ RSpec.describe 'Users API request', type: :request do
 
     describe 'POST /users' do
         before do
-            headers = { 'Accept' => 'application/vnd.apion.v1'}
-            post '/users' , params: { user: user_params }, headers: headers
+            post '/users' , params: { user: user_params }.to_json, headers: headers
         end
 
         context 'when the request params are valid' do
@@ -48,8 +51,7 @@ RSpec.describe 'Users API request', type: :request do
             end
 
             it 'returns json data with created user' do
-                user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response[:email]).to eq(user_params[:email])
+                expect(json_body[:email]).to eq(user_params[:email])
             end
         end
 
@@ -61,18 +63,15 @@ RSpec.describe 'Users API request', type: :request do
             end
 
             it 'returns the data json for the erros' do
-                user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response).to have_key(:errors)
+                expect(json_body).to have_key(:errors)
             end
         end
 
     end
 
-
     describe 'PUT /user/:id' do
         before do
-            headers = { 'Accept' => 'application/vnd.apion.v1'}
-            put "/users/#{user_id}" , params: { user: user_params }, headers: headers
+            put "/users/#{user_id}" , params: { user: user_params }.to_json, headers: headers
         end
 
         context 'when the request params are valid' do
@@ -83,8 +82,7 @@ RSpec.describe 'Users API request', type: :request do
             end
 
             it 'returns json data for updated user' do
-                user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response[:email]).to eq(user_params[:email])
+                expect(json_body[:email]).to eq(user_params[:email])
             end
         end
 
@@ -96,8 +94,7 @@ RSpec.describe 'Users API request', type: :request do
             end
 
             it 'returns the data json for the erros' do
-                user_response = JSON.parse(response.body, symbolize_names: true)
-                expect(user_response).to have_key(:errors)
+                expect(json_body).to have_key(:errors)
             end
         end
     
@@ -105,7 +102,6 @@ RSpec.describe 'Users API request', type: :request do
 
     describe 'DELETE /users/:id' do
         before do
-            headers = { "Accept" => "application/vnd.apion.v1" }
             delete "/users/#{user_id}", params: {}, headers: headers
         end
 
